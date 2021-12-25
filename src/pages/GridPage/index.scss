@@ -1,0 +1,6 @@
+.col-sidebar-span {
+  @media (min-width: 768px) {
+    flex: 0 0 auto;
+    width: 250px;
+  }
+}
