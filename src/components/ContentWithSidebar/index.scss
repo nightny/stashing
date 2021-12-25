@@ -1,0 +1,12 @@
+.col-sidebar-250 {
+  flex: 0 0 auto;
+  @media (min-width: 768px) {
+    width: 250px;
+  }
+}
+.col-sidebar-200 {
+  flex: 0 0 auto;
+  @media (min-width: 768px) {
+    width: 200px;
+  }
+}

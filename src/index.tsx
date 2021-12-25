@@ -4,14 +4,14 @@ import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import Header from './components/Header';
-import SearchResultsPage from './pages/SearchResultsPage';
+import ExternalSearchResultsPage from './pages/ExternalSearchResultsPage';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <div className="container-fluid py-3">
         <Header/>
-        <SearchResultsPage/>
+        <ExternalSearchResultsPage/>
       </div>
     </BrowserRouter>
   </React.StrictMode>,

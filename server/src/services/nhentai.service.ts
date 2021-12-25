@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { API } from 'nhentai-api';
+import { nhentaiBookModel } from '../model/mapper/nhentai';
 
 @Injectable()
 export class NhentaiService {
-  private readonly api = new API(null);
+  private readonly api = new API(undefined);
 
   async searchPosts(query: string) {
-    //let search = await this.api.search(query);
+    const search = await this.api.search(query);
+    return search.books.map((book) => nhentaiBookModel(book, this.api));
   }
 }
