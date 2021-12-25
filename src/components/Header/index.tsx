@@ -1,12 +1,14 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Button, Form } from 'react-bootstrap';
 
 export default function Header() {
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: any) => console.log(data);
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
+  const { register, handleSubmit } = useForm({ defaultValues: { query } });
+  const navigate = useNavigate();
   return <header>
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit((data) => navigate(data.query ? `/?q=${data.query}` : "/"))}>
       <div className="d-flex flex-row align-items-center pb-3 mb-4 border-bottom border-secondary">
         <Link to="/" className="mx-3 d-flex align-items-center text-white text-decoration-none">
           <span className="fs-4">Stashing</span>

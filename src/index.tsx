@@ -4,14 +4,14 @@ import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import Header from './components/Header';
-import GridPage from './pages/GridPage';
+import SearchResultsPage from './pages/SearchResultsPage';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <div className="container-fluid py-3">
         <Header/>
-        <GridPage/>
+        <SearchResultsPage/>
       </div>
     </BrowserRouter>
   </React.StrictMode>,
