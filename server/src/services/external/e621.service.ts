@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import E621 from 'e621';
-import { e621PostModel } from '../model/mapper/e621';
+import { e621PostModel } from '../../model/mapper/e621';
 
 @Injectable()
 export class E621Service {
@@ -8,7 +8,10 @@ export class E621Service {
 
   async searchPosts(tags: string | string[]) {
     const posts = await this.e621.posts.search({ tags });
+    return posts.map(e621PostModel);
+  }
 
-    return posts.map((post) => e621PostModel(post));
+  async getPost(id: string) {
+    return this.e621.posts.get(id).then(e621PostModel);
   }
 }

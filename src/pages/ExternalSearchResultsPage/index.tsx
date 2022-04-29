@@ -1,9 +1,13 @@
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import ExternalSearchResultsContent from './content';
+import ExternalSearchResultsPageContent from './content';
 import { ExternalPostModel } from '../../model/ExternalPostModel';
 
-export default function ExternalSearchResultsPage() {
+export interface Props {
+  site?: string;
+}
+
+export default function ExternalSearchResultsPage({ site }: Props) {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -17,10 +21,10 @@ export default function ExternalSearchResultsPage() {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, site }),
     };
 
-    fetch('http://localhost:3200/external/searchPosts', options)
+    fetch('http://localhost:3200/api/external/searchPosts', options)
       .then(res => res.json())
       .then(json => {
         setPosts(json.posts);
@@ -28,7 +32,7 @@ export default function ExternalSearchResultsPage() {
           console.log(json.errors);
         }
       });
-  }, [query]);
+  }, [query, site]);
 
-  return <ExternalSearchResultsContent posts={posts}/>;
+  return <ExternalSearchResultsPageContent posts={posts}/>;
 }

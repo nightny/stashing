@@ -2,7 +2,7 @@ import ContentWithSidebar from '../../components/ContentWithSidebar';
 import ResponsiveGrid from '../../components/ResponsiveGrid';
 import ExternalPostThumbnail from '../../components/ExternalPostThumbnail';
 import NoPosts from './NoPosts';
-import LoadingPosts from './LoadingPosts';
+import CenteredSpinner from '../../components/CenteredSpinner';
 import { ExternalPostModel } from '../../model/ExternalPostModel';
 import ExternalPostModal from '../../components/ExternalPostModal';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ interface ContentProps {
 
 function Content({ posts, setPost }: ContentProps) {
   if (!posts) {
-    return <LoadingPosts/>;
+    return <CenteredSpinner/>;
   }
 
   if (!posts.length) {
@@ -38,7 +38,7 @@ function Content({ posts, setPost }: ContentProps) {
   />;
 }
 
-export default function ExternalSearchResultsContent({ posts }: Props) {
+export default function ExternalSearchResultsPageContent({ posts }: Props) {
   const [post, setPost] = useState<ExternalPostModel>();
   return <>
     <ContentWithSidebar thickness="250" sidebar={'This is the sidebar'}>

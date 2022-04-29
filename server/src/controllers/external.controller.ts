@@ -1,12 +1,24 @@
-import { Body, Controller, Get, Headers, Post, Query, Res } from '@nestjs/common';
-import { ExternalPostBaseModel } from '../model/ExternalPostModel';
-import { E621Service } from '../services/e621.service';
-import { NhentaiService } from '../services/nhentai.service';
+import {
+  Body,
+  CacheInterceptor,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Post,
+  Query,
+  Res,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ExternalPostBaseModel, ExternalPostModel } from '../model/ExternalPostModel';
+import { E621Service } from '../services/external/e621.service';
+import { NhentaiService } from '../services/external/nhentai.service';
 import { HttpService } from '@nestjs/axios';
 import { Response } from 'express';
 import { firstValueFrom } from 'rxjs';
 
-@Controller('external')
+@Controller('api/external')
+@UseInterceptors(CacheInterceptor)
 export class ExternalController {
   constructor(
     private readonly e621: E621Service,
@@ -14,19 +26,35 @@ export class ExternalController {
     private readonly http: HttpService,
   ) {}
 
-  @Post('/searchPosts')
-  async searchPosts(@Body('query') query: string) {
-    const success: ExternalPostBaseModel[][] = [];
+  private readonly siteMapper: Record<string, (query: string) => Promise<ExternalPostModel[]>> = {
+    e621: (query: string) => this.e621.searchPosts(query),
+    nhentai: (query: string) => this.nhentai.searchPosts(query),
+  }
+
+  @Post('searchPosts')
+  async searchPosts(@Body('query') query: string, @Body('site') site?: string) {
+    const success: ExternalPostModel[][] = [];
     const errors: any[] = [];
 
-    await Promise.all(
-      [this.e621.searchPosts(query)/*, this.nhentai.searchPosts(query)*/].map((p) =>
-        p.then(
-          (value) => success.push(value),
-          (reason) => errors.push(reason),
+    if (site) {
+      const fn = this.siteMapper[site];
+      if (!fn) {
+        errors.push(`Unknown site ${site}`)
+      }
+      await fn(query).then(
+        (value) => success.push(value),
+        (reason) => errors.push(reason),
+      );
+    } else {
+      await Promise.all(
+        Object.values(this.siteMapper).map(value => value(query)).map((p) =>
+          p.then(
+            (value) => success.push(value),
+            (reason) => errors.push(reason),
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     const posts: ExternalPostBaseModel[] = [];
     while (success.length > 1) {
@@ -43,6 +71,11 @@ export class ExternalController {
     }
 
     return { posts, errors };
+  }
+
+  @Get('e621/:id')
+  async getE621(@Param('id') id: string) {
+    return this.e621.getPost(id);
   }
 
   @Get(['proxy', 'proxy.png', 'proxy.jpg', 'proxy.jpeg'])

@@ -1,5 +1,5 @@
-import ContentWithSidebar from '../../ContentWithSidebar';
-import { E621PostModel } from '../../../model/ExternalPostModel';
+import ContentWithSidebar from '../ContentWithSidebar';
+import { E621PostModel } from '../../model/ExternalPostModel';
 import { Alert, Image } from 'react-bootstrap';
 import { useState } from 'react';
 
@@ -37,12 +37,18 @@ export default function E621PostContent({ post }: Props) {
   return <div>
     {specialImport && show && <Alert onClose={() => setShow(false)} dismissible={true}>
         <Alert.Heading as={'h5'}>Special Import Available!</Alert.Heading>
-        <strong>Stashing</strong> detected that this post is tied to at least one pool, has a parent
-        or at least one children, and can be imported as a collection.
+        <div>
+            <strong>Stashing</strong> detected that this post is tied to at least one pool, has a parent
+            or at least one children, and can be imported as a collection.
+        </div>
+        <div>
+            This post and all related posts will be turned into a collection. <a
+            target="_blank" href={`/import/e621/${post.id}/special`}>Click here to begin special import.</a>
+        </div>
     </Alert>}
     <ContentWithSidebar thickness="250" sidebar={<E621PostSidebar post={post}/>}>
       <div className="text-center"><Image fluid src={post.url}/></div>
-      {post.description?.length && <Alert variant="primary" className={'mt-2'}>
+      {post.description?.length > 0 && <Alert variant="primary" className={'mt-2'}>
           <h5><strong>Description</strong></h5>
         {post.description.split('\n').map((s, i) => <div key={`E621PC-${post.id}-${i}`}>{s}</div>)}
       </Alert>}
